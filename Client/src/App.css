@@ -1,0 +1,40 @@
+body{
+  /* border: 2px solid black; */
+  width: 100%;
+  margin: 0%;
+  padding: 0%;
+}
+.form-cont{
+  /* border: 2px solid red; */
+  margin-top: 2%;
+}
+.select-cont{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap:5%;
+  margin:2% ;
+}
+.input-cont{
+  display: flex;
+  justify-content: space-between;
+  margin:2% ;
+}
+.detail-cont{
+  display: flex;
+  flex-direction: column;
+  margin: 2%;
+}
+.Filter-cont{
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap:5%;
+  margin:2% ;
+}
+.entity-cont{
+  margin: 2%;
+}
+.entity-cont>div{
+  display: flex;
+  gap: 20px;
+  
+}
