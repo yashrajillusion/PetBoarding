@@ -4,42 +4,27 @@ import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addEntityFunction } from "../Redux/Entity/action";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { addEntityFunction, editEntityFunction } from "../Redux/Entity/action";
+import { ColorButton } from "./CreateEntity";
 
-export const CreateEntityPage = () => {
-  const initState = {
-    name: "",
-    city: "",
-    address: "",
-    cost: "",
-    rating: "",
-    verified: "",
-    types: "",
-    size: "",
-    supervision: "",
-    unsepervised: "",
-    sleepPlace: "",
-    poty: "",
-    walks: "",
-    typeofhome: "",
-    outdoor: "",
-    emergency: "",
-    summary: "",
-  };
+export const EditEntityPage = () => {
+  let { current, city } = useSelector((store) => store.entity);
+  const { id } = useParams();
   const dispatch = useDispatch();
-  const [data, setData] = useState(initState);
+  const [data, setData] = useState(current);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
   };
 
   const handleSubmit = () => {
-    dispatch(addEntityFunction(data));
+    dispatch(editEntityFunction(data, id));
   };
   return (
     <div className="form-cont">
-      <p>Add New Entity</p>
+      <p>Edit Entity</p>
       <div className="input-cont">
         <TextField
           onChange={handleChange}
@@ -47,6 +32,7 @@ export const CreateEntityPage = () => {
           name="name"
           label="Name"
           variant="outlined"
+          value={data.name}
         />
         <TextField
           onChange={handleChange}
@@ -54,6 +40,7 @@ export const CreateEntityPage = () => {
           name="city"
           label="City"
           variant="outlined"
+          value={data.city}
         />
         <TextField
           onChange={handleChange}
@@ -61,6 +48,7 @@ export const CreateEntityPage = () => {
           name="address"
           label="Address"
           variant="outlined"
+          value={data.address}
         />
         <TextField
           onChange={handleChange}
@@ -69,6 +57,7 @@ export const CreateEntityPage = () => {
           type="number"
           label="Capacity"
           variant="outlined"
+          value={data.capacity}
         />
         <TextField
           onChange={handleChange}
@@ -77,6 +66,7 @@ export const CreateEntityPage = () => {
           type="number"
           label="Cost/perday"
           variant="outlined"
+          value={data.cost}
         />
         <TextField
           onChange={handleChange}
@@ -85,6 +75,7 @@ export const CreateEntityPage = () => {
           type="number"
           label="Rating"
           variant="outlined"
+          value={data.rating}
         />
       </div>
       <div className="select-cont">
@@ -160,6 +151,7 @@ export const CreateEntityPage = () => {
           label="Level of adult Supervision"
           variant="outlined"
           margin="normal"
+          value={data.supervision}
         />
         <TextField
           name="unsepervised"
@@ -169,6 +161,7 @@ export const CreateEntityPage = () => {
           label="The place your pet will be if they are left unsupervised at home."
           variant="outlined"
           margin="normal"
+          value={data.unsepervised}
         />
         <TextField
           name="sleepPlace"
@@ -178,6 +171,7 @@ export const CreateEntityPage = () => {
           label="The place your pet will sleep at night"
           variant="outlined"
           margin="normal"
+          value={data.sleepPlace}
         />
         <TextField
           name="poty"
@@ -187,6 +181,7 @@ export const CreateEntityPage = () => {
           label="The number of potty breaks provided per day"
           variant="outlined"
           margin="normal"
+          value={data.poty}
         />
         <TextField
           name="walks"
@@ -196,6 +191,7 @@ export const CreateEntityPage = () => {
           label="The number of walks provided per day"
           variant="outlined"
           margin="normal"
+          value={data.walks}
         />
         <TextField
           name="typeofhome"
@@ -205,6 +201,7 @@ export const CreateEntityPage = () => {
           label="The type of home I stay in"
           variant="outlined"
           margin="normal"
+          value={data.typeofhome}
         />
         <TextField
           name="outdoor"
@@ -214,6 +211,7 @@ export const CreateEntityPage = () => {
           label="My outdoor area size."
           variant="outlined"
           margin="normal"
+          value={data.outdoor}
         />
         <TextField
           name="emergency"
@@ -223,6 +221,7 @@ export const CreateEntityPage = () => {
           label="Emergency transport"
           variant="outlined"
           margin="normal"
+          value={data.emergency}
         />
         <TextField
           name="summary"
@@ -233,6 +232,7 @@ export const CreateEntityPage = () => {
           multiline
           rows={3}
           margin="normal"
+          value={data.summary}
         />
         <ColorButton onClick={handleSubmit} variant="contained">
           Submit
@@ -241,12 +241,3 @@ export const CreateEntityPage = () => {
     </div>
   );
 };
-
-export const ColorButton = styled(Button)(({ theme }) => ({
-  color: "white",
-  margin: "1%",
-  backgroundColor: purple[500],
-  "&:hover": {
-    backgroundColor: purple[700],
-  },
-}));

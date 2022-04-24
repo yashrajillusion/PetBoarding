@@ -10,9 +10,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
+  currentEntityFunction,
   getallCitiesFunction,
   getAllEntityFunction,
-  getFilterEntityFunction,
 } from "../Redux/Entity/action";
 import { store } from "../Redux/store";
 import { setPage, setRowsPerPage } from "../Redux/Pagination/action";
@@ -34,17 +34,17 @@ export const Home = () => {
   const { page, count, rowsPerPage } = useSelector((store) => store.pagination);
   const handleChangePage = (event, newPage) => {
     dispatch(setPage(newPage));
-    dispatch(getAllEntityFunction(newPage, rowsPerPage));
+    dispatch(getAllEntityFunction(newPage, rowsPerPage, filter));
   };
   useEffect(() => {
-    dispatch(getAllEntityFunction(page, rowsPerPage));
+    dispatch(getAllEntityFunction(page, rowsPerPage, filter));
     dispatch(getallCitiesFunction());
   }, []);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setfilter({ ...filter, [name]: value });
     dispatch(
-      getFilterEntityFunction(page, rowsPerPage, { ...filter, [name]: value })
+      getAllEntityFunction(page, rowsPerPage, { ...filter, [name]: value })
     );
   };
   return (
@@ -136,11 +136,7 @@ export const Home = () => {
       </div>
       <CustomizedTables data={data} />
       {/* <TablePaginationDemo /> */}
-      <Pagination
-        count={Math.ceil(count / rowsPerPage)}
-        page={page}
-        onChange={handleChangePage}
-      />
+      <Pagination count={count} page={page} onChange={handleChangePage} />
     </div>
   );
 };
@@ -167,6 +163,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export const CustomizedTables = ({ data }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -184,12 +182,23 @@ export const CustomizedTables = ({ data }) => {
         </TableHead>
         <TableBody>
           {data.map(
-            ({ id, name, city, address, capacity, cost, verified, rating }) => (
+            ({
+              id,
+              _id,
+              name,
+              city,
+              address,
+              capacity,
+              cost,
+              verified,
+              rating,
+            }) => (
               <StyledTableRow
                 onClick={() => {
-                  navigate(`/listing/${id}`);
+                  dispatch(currentEntityFunction(_id));
+                  navigate(`/listing/${_id}`);
                 }}
-                key={id}
+                key={nanoid()}
               >
                 <StyledTableCell>{id}</StyledTableCell>
                 <StyledTableCell component="th" scope="row">

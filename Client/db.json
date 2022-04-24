@@ -337,10 +337,22 @@
       "id": 16
     }
   ],
-  "cities":[
-    {"id":1,"city":"Patna"},
-    {"id":1,"city":"Gaya"},
-    {"id":1,"city":"Delhi"},
-    {"id":1,"city":"Mumbai"}
+  "cities": [
+    {
+      "id": 1,
+      "city": "Patna"
+    },
+    {
+      "id": 1,
+      "city": "Gaya"
+    },
+    {
+      "id": 1,
+      "city": "Delhi"
+    },
+    {
+      "id": 1,
+      "city": "Mumbai"
+    }
   ]
 }
