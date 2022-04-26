@@ -57,6 +57,16 @@ a{
 .status{
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 90%;
   margin: auto;
+  border: 2px solid rgb(91, 73, 229);
+  margin-bottom: 10px;
+  padding: 5px;
+}
+.home-progress{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

@@ -18,7 +18,7 @@ import { store } from "../Redux/store";
 import { setPage, setRowsPerPage } from "../Redux/Pagination/action";
 import Pagination from "@mui/material/Pagination";
 import { ColorButton } from "./CreateEntity";
-import { InputLabel, MenuItem, Select } from "@mui/material";
+import { CircularProgress, InputLabel, MenuItem, Select } from "@mui/material";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 
@@ -29,7 +29,7 @@ export const Home = () => {
     city: "",
     verified: "",
   });
-  const { data, city } = useSelector((store) => store.entity);
+  const { data, loading, city } = useSelector((store) => store.entity);
   const dispatch = useDispatch();
   const { page, count, rowsPerPage } = useSelector((store) => store.pagination);
   const handleChangePage = (event, newPage) => {
@@ -134,9 +134,9 @@ export const Home = () => {
           </Select>
         </div>
       </div>
-      <CustomizedTables data={data} />
-      {/* <TablePaginationDemo /> */}
+      <CustomizedTables data={data} loading={loading} />
       <Pagination count={count} page={page} onChange={handleChangePage} />
+      {loading ? <CircularProgress className="home-progress" /> : ""}
     </div>
   );
 };
@@ -161,7 +161,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export const CustomizedTables = ({ data }) => {
+export const CustomizedTables = ({ data, loading }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -170,7 +170,7 @@ export const CustomizedTables = ({ data }) => {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Id</StyledTableCell>
+            <StyledTableCell>SI</StyledTableCell>
             <StyledTableCell>Name</StyledTableCell>
             <StyledTableCell>City</StyledTableCell>
             <StyledTableCell>Address</StyledTableCell>
@@ -180,40 +180,40 @@ export const CustomizedTables = ({ data }) => {
             <StyledTableCell>Rating</StyledTableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          {data.map(
-            ({
-              id,
-              _id,
-              name,
-              city,
-              address,
-              capacity,
-              cost,
-              verified,
-              rating,
-            }) => (
-              <StyledTableRow
-                onClick={() => {
-                  dispatch(currentEntityFunction(_id));
-                  navigate(`/listing/${_id}`);
-                }}
-                key={nanoid()}
-              >
-                <StyledTableCell>{id}</StyledTableCell>
-                <StyledTableCell component="th" scope="row">
-                  {name}
-                </StyledTableCell>
-                <StyledTableCell>{city}</StyledTableCell>
-                <StyledTableCell>{address}</StyledTableCell>
-                <StyledTableCell>{capacity}</StyledTableCell>
-                <StyledTableCell>{cost}</StyledTableCell>
-                <StyledTableCell>{verified.toUpperCase()}</StyledTableCell>
-                <StyledTableCell>{rating}</StyledTableCell>
-              </StyledTableRow>
-            )
-          )}
-        </TableBody>
+
+        {loading ? (
+          <TableBody>
+            <StyledTableRow></StyledTableRow>
+          </TableBody>
+        ) : (
+          <TableBody>
+            {data.map(
+              (
+                { _id, name, city, address, capacity, cost, verified, rating },
+                id
+              ) => (
+                <StyledTableRow
+                  onClick={() => {
+                    dispatch(currentEntityFunction(_id));
+                    navigate(`/listing/${_id}`);
+                  }}
+                  key={nanoid()}
+                >
+                  <StyledTableCell>{id + 1}</StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {name}
+                  </StyledTableCell>
+                  <StyledTableCell>{city}</StyledTableCell>
+                  <StyledTableCell>{address}</StyledTableCell>
+                  <StyledTableCell>{capacity}</StyledTableCell>
+                  <StyledTableCell>{cost}</StyledTableCell>
+                  <StyledTableCell>{verified.toUpperCase()}</StyledTableCell>
+                  <StyledTableCell>{rating}</StyledTableCell>
+                </StyledTableRow>
+              )
+            )}
+          </TableBody>
+        )}
       </Table>
     </TableContainer>
   );

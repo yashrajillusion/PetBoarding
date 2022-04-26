@@ -25,6 +25,7 @@ export const getAllEntityFunction =
   (page, size, { cost, rating, city, verified }) =>
   async (dispatch) => {
     try {
+      dispatch(entityLoading(true));
       let { data } = await axios.get(`http://localhost:5001/entity`, {
         params: {
           page,
@@ -38,27 +39,46 @@ export const getAllEntityFunction =
       dispatch(addAllEntity(data.entity));
       dispatch(totalCount(data.total));
     } catch (err) {
+      dispatch(entityLoading(false));
+      dispatch(entityError(true));
       console.log(err.message);
     }
   };
 
 export const addEntityFunction = (body) => async (dispatch) => {
   try {
-    let { data } = await axios.post("http://localhost:5001/entity", body);
-    // console.log(data);
-    dispatch(getAllEntityFunction());
+    let { token } = JSON.parse(localStorage.getItem("user")) || {};
+    let config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    let { data } = await axios.post(
+      "http://localhost:5001/entity",
+      body,
+      config
+    );
+    console.log(data);
+    dispatch(getAllEntityFunction(null, null, {}));
   } catch (err) {
     console.log(err.message);
   }
 };
 export const editEntityFunction = (body, id) => async (dispatch) => {
   try {
+    let { token } = JSON.parse(localStorage.getItem("user")) || {};
+    let config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     let { data } = await axios.patch(
       `http://localhost:5001/entity/${id}`,
-      body
+      body,
+      config
     );
     dispatch(currentEntity(data));
-    dispatch(getAllEntityFunction());
+    dispatch(getAllEntityFunction(null, null, {}));
   } catch (err) {
     console.log(err.message);
   }
@@ -66,8 +86,18 @@ export const editEntityFunction = (body, id) => async (dispatch) => {
 
 export const deleteEntityFunction = (id) => async (dispatch) => {
   try {
-    let { data } = await axios.delete(`http://localhost:5001/entity/${id}`);
-    dispatch(getAllEntityFunction());
+    let { token } = JSON.parse(localStorage.getItem("user")) || {};
+    let config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    let { data } = await axios.delete(
+      `http://localhost:5001/entity/${id}`,
+      config
+    );
+    console.log(data);
+    dispatch(getAllEntityFunction(null, null, {}));
   } catch (err) {
     console.log(err.message);
   }

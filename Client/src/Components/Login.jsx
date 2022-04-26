@@ -52,7 +52,7 @@ export const Login = () => {
         >
           Login
         </CustomButtonRoot>
-        <Link to={"/signup"}>Already have account Signup</Link>
+        <Link to={"/signup"}>Don't have an account Signup</Link>
       </div>
     </>
   );

@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Entity = require("../model/entity");
+const authenticate = require("../middleware/authenticate");
 const authorization = require("../middleware/authorization");
-
-router.post("/", authorization, async (req, res) => {
+router.post("/", authenticate, authorization, async (req, res) => {
   try {
     let entity = await Entity.create(req.body);
     return res.status(200).send(entity);
@@ -53,7 +53,7 @@ router.get("/:id", async (req, res) => {
     return res.status(400).send(err.message);
   }
 });
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", authenticate, authorization, async (req, res) => {
   try {
     let entity = await Entity.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -64,7 +64,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticate, authorization, async (req, res) => {
   try {
     let entity = await Entity.findByIdAndDelete(req.params.id).lean().exec();
     return res.status(200).send(entity);

@@ -19,7 +19,7 @@ const entitySchema = mongoose.Schema(
     emergency: { type: String, required: true },
     summary: { type: String, required: true },
     capacity: { type: Number, required: true },
-    id: { type: Number, required: true },
+    // id: { type: Number, required: true },
   },
   {
     versionKey: false,

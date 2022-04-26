@@ -1,4 +1,3 @@
-import TablePagination from "@mui/material/TablePagination";
 import { useDispatch, useSelector } from "react-redux";
 import { React, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
@@ -9,21 +8,29 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { store } from "../Redux/store";
 import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ButtonUnstyled, {
   buttonUnstyledClasses,
 } from "@mui/base/ButtonUnstyled";
 import { Link, Navigate } from "react-router-dom";
 import { addPetFunction, getAllPetFunction } from "../Redux/Pets/action";
-import { Alert } from "@mui/material";
-import { getAllBookingFunction } from "../Redux/Booking/action";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
+import {
+  editBookingFunction,
+  getAllBookingFunction,
+} from "../Redux/Booking/action";
 const blue = {
   500: "#007FFF",
   600: "#0072E5",
@@ -43,7 +50,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -69,41 +76,64 @@ export default function BasicTabs() {
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllBookingFunction(user._id));
-  }, []);
+    if (user._id !== undefined) {
+      dispatch(getAllBookingFunction(user._id, user.role));
+    }
+  }, [user]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          <Tab label="All Pets" {...a11yProps(0)} />
-          <Tab label="Add Pets" {...a11yProps(1)} />
-          <Tab label="Booking" {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <div>
-          <PetsCont />
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <div>
-          <AddPetsForm />
-        </div>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        {booking.map((el) => (
-          <BookingStatusCard data={el} />
-        ))}
-      </TabPanel>
-    </Box>
+    <>
+      {user.role === "admin" ? (
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="All Booking" {...a11yProps(0)} />
+            </Tabs>
+          </Box>
+          <TabPanel value={value} index={0}>
+            {booking.map((el) => (
+              <BookingStatusCard key={nanoid()} data={el} status_btn={true} />
+            ))}
+          </TabPanel>
+        </Box>
+      ) : (
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab label="All Pets" {...a11yProps(0)} />
+              <Tab label="Add Pets" {...a11yProps(1)} />
+              <Tab label="Booking" {...a11yProps(2)} />
+            </Tabs>
+          </Box>
+          <TabPanel value={value} index={0}>
+            <div>
+              <PetsCont />
+            </div>
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <div>
+              <AddPetsForm />
+            </div>
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            {booking.map((el) => (
+              <BookingStatusCard key={nanoid()} data={el} />
+            ))}
+          </TabPanel>
+        </Box>
+      )}
+    </>
   );
 }
 
@@ -111,10 +141,11 @@ export const PetsCont = () => {
   const dispatch = useDispatch();
   const { pet } = useSelector((store) => store.pet);
   const { user } = useSelector((store) => store.user);
-  console.log(pet);
   useEffect(() => {
-    dispatch(getAllPetFunction(user._id));
-  }, []);
+    if (user._id !== undefined) {
+      dispatch(getAllPetFunction(user._id));
+    }
+  }, [user]);
 
   return (
     <div>
@@ -269,7 +300,7 @@ export const CustomButtonRoot = styled(ButtonUnstyled)`
   }
 `;
 
-const BookingStatusCard = ({ data }) => {
+const BookingStatusCard = ({ data, status_btn }) => {
   let status = "";
   let message = "";
   if (data.status == "pending") {
@@ -282,11 +313,77 @@ const BookingStatusCard = ({ data }) => {
     status = "error";
     message = "Declined";
   }
-  console.log(status);
   return (
     <div className="status">
+      <p>ID {data._id}</p>
       <p>{data.petId.name}</p>
+
       <Alert severity={status}>{message}</Alert>
+      {status_btn ? <BookingTogle {...data} /> : ""}
     </div>
   );
 };
+
+export function BookingTogle({ _id, from, to, userId }) {
+  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (server, val, id) => {
+    if (server) {
+      dispatch(editBookingFunction({ status: val }, id));
+    }
+    setOpen(false);
+  };
+
+  return (
+    <div style={{ display: "inline" }}>
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Confirm
+      </Button>
+      <Dialog
+        open={open}
+        onClose={() => {
+          handleClose(false, null);
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {`userId : ${userId}`}
+        </DialogTitle>
+        <DialogContent>
+          {`From :- ${from?.split("T")[0]} To :- ${to.split("T")[0]}`}
+          <div></div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              handleClose(false, null);
+            }}
+          >
+            cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleClose(true, "declined", _id);
+            }}
+            autoFocus
+          >
+            Decline
+          </Button>
+          <Button
+            onClick={() => {
+              handleClose(true, "accepted", _id);
+            }}
+            autoFocus
+          >
+            Accept
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}

@@ -40,12 +40,12 @@ export const EntityPage = () => {
   const { current, city } = useSelector((store) => store.entity);
   const { user } = useSelector((store) => store.user);
   useEffect(() => {
-    dispatch(getAllPetFunction(user._id));
-  }, []);
-
+    if (user._id != undefined) {
+      dispatch(getAllPetFunction(user._id));
+    }
+  }, [user]);
   const { id } = useParams();
   const dispatch = useDispatch();
-  useEffect(() => {}, []);
   const navigate = useNavigate();
   return (
     <div>
@@ -114,10 +114,8 @@ export function AlertDialog() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const { pet } = useSelector((store) => store.pet);
-  const { booking: Bdata } = useSelector((store) => store.booking);
-  console.log(Bdata);
   const [booking, setBooking] = useState({
-    userId: pet[0].userId,
+    userId: pet[0]?.userId,
     from: "",
     to: "",
     petId: "",
@@ -129,11 +127,12 @@ export function AlertDialog() {
     const { name, value } = e.target;
     setBooking({ ...booking, [name]: value });
   };
-  const handleClose = (e) => {
-    if (e.target.value == "cancel") return;
-    dispatch(addBookingFunction(booking));
+  const handleClose = (server) => {
+    //if server is true we make req otherwise cancel it
+    if (server) dispatch(addBookingFunction(booking));
+
     setBooking({
-      userId: pet[0].userId,
+      userId: pet[0]?.userId,
       from: "",
       to: "",
       petId: "",
@@ -148,7 +147,9 @@ export function AlertDialog() {
       </Button>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          handleClose(false);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -156,7 +157,7 @@ export function AlertDialog() {
           {"Select date and your pet by name"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <div>
             <InputLabel id="demo-simple-select-helper-label-pet">
               Pet Name
             </InputLabel>
@@ -168,8 +169,11 @@ export function AlertDialog() {
               id="demo-simple-select-helper"
               label="Pet Name"
             >
+              <MenuItem>Select your pet by name</MenuItem>
               {pet.map(({ _id, name }) => (
-                <MenuItem value={_id}>{name}</MenuItem>
+                <MenuItem key={_id} value={_id}>
+                  {name}
+                </MenuItem>
               ))}
             </Select>
             <InputLabel id="demo-simple-select-helper">From</InputLabel>
@@ -192,11 +196,22 @@ export function AlertDialog() {
               margin="normal"
               type="date"
             />
-          </DialogContentText>
+          </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>cancel</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button
+            onClick={() => {
+              handleClose(false);
+            }}
+          >
+            cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleClose(true);
+            }}
+            autoFocus
+          >
             Confirm
           </Button>
         </DialogActions>

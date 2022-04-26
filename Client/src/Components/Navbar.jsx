@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ColorButton } from "./CreateEntity";
 
 import { React, useEffect, useState } from "react";
@@ -65,6 +65,7 @@ export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user, token, type, loading, error } = useSelector(
     (store) => store.user
   );
@@ -86,15 +87,25 @@ export default function PrimarySearchAppBar() {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (route) => {
     setAnchorEl(null);
     handleMobileMenuClose();
+    if (route != undefined) {
+      navigate(route);
+    }
+  };
+  const handleLogout = (route) => {
+    localStorage.removeItem("user");
+    setAnchorEl(null);
+    handleMobileMenuClose();
+    if (route != undefined) {
+      navigate(route);
+    }
   };
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -112,22 +123,42 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>
-        {" "}
-        <Link to={"/listing/create"}>Create Entity</Link>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose("/listing/create");
+        }}
+      >
+        Create Entity
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>
-        <Link to={"/pets"}>My Dashboard</Link>
+      <MenuItem
+        onClick={() => {
+          handleMenuClose("/pets");
+        }}
+      >
+        My Dashboard
       </MenuItem>
-      <MenuItem>
-        {" "}
-        {true ? (
-          <Link to={"/login"}>Login</Link>
-        ) : (
-          <Link to={"/signup"}>Signup</Link>
-        )}
-      </MenuItem>
+
+      {type === null ? (
+        <span>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose("/login");
+            }}
+          >
+            Login
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose("/signup");
+            }}
+          >
+            Signup
+          </MenuItem>
+        </span>
+      ) : (
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      )}
     </Menu>
   );
 
@@ -162,7 +193,7 @@ export default function PrimarySearchAppBar() {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={5} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -229,7 +260,7 @@ export default function PrimarySearchAppBar() {
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={5} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
