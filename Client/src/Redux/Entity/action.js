@@ -14,7 +14,9 @@ export const entityError = (payload) => ({ type: ENTITY_ERROR, payload });
 
 export const currentEntityFunction = (id) => async (dispatch) => {
   try {
-    let { data } = await axios.get(`http://localhost:5001/entity/${id}`);
+    let { data } = await axios.get(
+      `https://petboarding.herokuapp.com/entity/${id}`
+    );
     dispatch(currentEntity(data));
   } catch (err) {
     console.log(err.message);
@@ -26,16 +28,19 @@ export const getAllEntityFunction =
   async (dispatch) => {
     try {
       dispatch(entityLoading(true));
-      let { data } = await axios.get(`http://localhost:5001/entity`, {
-        params: {
-          page,
-          size,
-          cost,
-          rating,
-          city,
-          verified,
-        },
-      });
+      let { data } = await axios.get(
+        `https://petboarding.herokuapp.com/entity`,
+        {
+          params: {
+            page,
+            size,
+            cost,
+            rating,
+            city,
+            verified,
+          },
+        }
+      );
       dispatch(addAllEntity(data.entity));
       dispatch(totalCount(data.total));
     } catch (err) {
@@ -54,7 +59,7 @@ export const addEntityFunction = (body) => async (dispatch) => {
       },
     };
     let { data } = await axios.post(
-      "http://localhost:5001/entity",
+      "https://petboarding.herokuapp.com/entity",
       body,
       config
     );
@@ -73,7 +78,7 @@ export const editEntityFunction = (body, id) => async (dispatch) => {
       },
     };
     let { data } = await axios.patch(
-      `http://localhost:5001/entity/${id}`,
+      `https://petboarding.herokuapp.com/entity/${id}`,
       body,
       config
     );
@@ -93,7 +98,7 @@ export const deleteEntityFunction = (id) => async (dispatch) => {
       },
     };
     let { data } = await axios.delete(
-      `http://localhost:5001/entity/${id}`,
+      `https://petboarding.herokuapp.com/entity/${id}`,
       config
     );
     console.log(data);
@@ -105,7 +110,7 @@ export const deleteEntityFunction = (id) => async (dispatch) => {
 
 export const getallCitiesFunction = () => async (dispatch) => {
   try {
-    let { data } = await axios.get(`http://localhost:5001/cities`);
+    let { data } = await axios.get(`https://petboarding.herokuapp.com/cities`);
     dispatch(addAllCity(data));
   } catch (err) {
     console.log(err.message);

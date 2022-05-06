@@ -70,7 +70,7 @@ export const Signup = () => {
         ) : (
           <CustomButtonRoot
             onClick={() => {
-              const url = "http://localhost:5001/auth";
+              const url = "https://petboarding.herokuapp.com/auth";
               distpatch(authRegister(url, userDetails));
             }}
           >

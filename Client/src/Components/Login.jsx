@@ -61,7 +61,7 @@ export const Login = () => {
         ) : (
           <CustomButtonRoot
             onClick={() => {
-              const url = "http://localhost:5001/auth/login";
+              const url = "https://petboarding.herokuapp.com/auth/login";
               distpatch(authRegister(url, userDetails));
             }}
           >

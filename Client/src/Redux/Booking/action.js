@@ -12,7 +12,7 @@ export const getAllBookingFunction =
   async (dispatch) => {
     try {
       let { data } = await axios.get(
-        `http://localhost:5001/booking?user=${userid}&admin=${admin}`
+        `https://petboarding.herokuapp.com/booking?user=${userid}&admin=${admin}`
       );
       // console.log(data);
       dispatch(addallBooking(data));
@@ -23,7 +23,10 @@ export const getAllBookingFunction =
 
 export const addBookingFunction = (body) => async (dispatch) => {
   try {
-    let { data } = await axios.post("http://localhost:5001/booking", body);
+    let { data } = await axios.post(
+      "https://petboarding.herokuapp.com/booking",
+      body
+    );
     console.log(data);
     dispatch(getAllBookingFunction(body.userId));
   } catch (err) {
@@ -40,7 +43,7 @@ export const editBookingFunction = (body, id) => async (dispatch) => {
       },
     };
     let { data } = await axios.patch(
-      `http://localhost:5001/booking/${id}`,
+      `https://petboarding.herokuapp.com/booking/${id}`,
       body,
       config,
       body
@@ -54,7 +57,9 @@ export const editBookingFunction = (body, id) => async (dispatch) => {
 
 export const deleteBookingFunction = (body, id) => async (dispatch) => {
   try {
-    let { data } = await axios.delete(`http://localhost:5001/booking/${id}`);
+    let { data } = await axios.delete(
+      `https://petboarding.herokuapp.com/booking/${id}`
+    );
     dispatch(getAllBookingFunction(body.userId, "admin"));
   } catch (err) {
     console.log(err.message);
