@@ -45,6 +45,7 @@ a{
 .loginbox{
   /* border: 2px solid black; */
   margin: auto;
+  margin-top: 2%;
   min-width: 210px;
   width: 20%;
   display: flex;

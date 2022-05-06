@@ -3,10 +3,12 @@ import axios from "axios";
 export const AUTH_USER = "AUTH_USER";
 export const AUTH_LOADING = "AUTH_LOADING";
 export const AUTH_ERROR = "AUTH_ERROR";
+export const LOGOUT = "LOGOUT";
 
 export const authUser = (payload) => ({ type: AUTH_USER, payload });
 export const authLoading = (payload) => ({ type: AUTH_LOADING, payload });
 export const authError = (payload) => ({ type: AUTH_ERROR, payload });
+export const authLogout = () => ({ type: LOGOUT, payload: {} });
 
 export const authRegister = (url, user) => async (dispatch) => {
   dispatch(authLoading(true));
@@ -15,6 +17,8 @@ export const authRegister = (url, user) => async (dispatch) => {
     localStorage.setItem("user", JSON.stringify(data));
     dispatch(authUser(data));
   } catch (err) {
+    dispatch(authLoading(false));
+    dispatch(authError(true));
     console.log(err.message);
   }
 };

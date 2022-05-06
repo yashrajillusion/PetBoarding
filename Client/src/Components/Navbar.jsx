@@ -1,6 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ColorButton } from "./CreateEntity";
-
 import { React, useEffect, useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -19,7 +17,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
-import { authUser } from "../Redux/Auth/action";
+import { authLogout, authUser } from "../Redux/Auth/action";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -96,6 +94,7 @@ export default function PrimarySearchAppBar() {
   };
   const handleLogout = (route) => {
     localStorage.removeItem("user");
+    dispatch(authLogout());
     setAnchorEl(null);
     handleMobileMenuClose();
     if (route != undefined) {

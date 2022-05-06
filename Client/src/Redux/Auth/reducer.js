@@ -1,6 +1,13 @@
-import { AUTH_ERROR, AUTH_LOADING, AUTH_USER } from "./action";
+import { AUTH_ERROR, AUTH_LOADING, AUTH_USER, LOGOUT } from "./action";
 
 const initState = {
+  user: {},
+  token: "",
+  type: null,
+  loading: false,
+  error: false,
+};
+const logoutState = {
   user: {},
   token: "",
   type: null,
@@ -23,6 +30,8 @@ export const authReducer = (store = initState, { type, payload }) => {
       return { ...store, error: payload };
     case AUTH_LOADING:
       return { ...store, loading: payload };
+    case LOGOUT:
+      return logoutState;
     default:
       return store;
   }

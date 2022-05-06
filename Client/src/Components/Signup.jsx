@@ -6,6 +6,7 @@ import ButtonUnstyled, {
 import { styled } from "@mui/system";
 import { Link, Navigate } from "react-router-dom";
 import { authRegister } from "../Redux/Auth/action";
+import { Alert, CircularProgress } from "@mui/material";
 const blue = {
   500: "#007FFF",
   600: "#0072E5",
@@ -26,13 +27,21 @@ export const Signup = () => {
     const { name, value } = e.target;
     setuserDetails({ ...userDetails, [name]: value });
   };
-  if (false) {
+  if (type) {
     return <Navigate to="/" />;
   }
 
   return (
     <>
       <div className="loginbox">
+        {error ? (
+          <Alert severity="error">
+            There was a problem in creating you accoung. Try another email or
+            password
+          </Alert>
+        ) : (
+          ""
+        )}
         <p>Name</p>
         <input
           name="name"
@@ -54,14 +63,21 @@ export const Signup = () => {
           type="text"
           placeholder="..password"
         />
-        <CustomButtonRoot
-          onClick={() => {
-            const url = "http://localhost:5001/auth";
-            distpatch(authRegister(url, userDetails));
-          }}
-        >
-          Signup
-        </CustomButtonRoot>
+        {loading ? (
+          <CustomButtonRoot disabled>
+            <CircularProgress sx={{ color: "white" }} />
+          </CustomButtonRoot>
+        ) : (
+          <CustomButtonRoot
+            onClick={() => {
+              const url = "http://localhost:5001/auth";
+              distpatch(authRegister(url, userDetails));
+            }}
+          >
+            Signup
+          </CustomButtonRoot>
+        )}
+
         <Link to={"/login"}>Already have an account login</Link>
       </div>
     </>
@@ -79,7 +95,7 @@ export const CustomButtonRoot = styled(ButtonUnstyled)`
   transition: all 150ms ease;
   cursor: pointer;
   border: none;
-
+  max-height: 50px;
   &:hover {
     background-color: ${blue[600]};
   }
